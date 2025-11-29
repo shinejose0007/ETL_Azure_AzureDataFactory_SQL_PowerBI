@@ -71,6 +71,30 @@ This repository is a hands-on demo that shows a minimal, reproducible analytics 
 - ADF copies from Blob to Azure SQL.
 - Power BI connects to either local KPIs or Azure SQL for reporting.
 
+##  forecast_repo
+
+```
+forecast_repo/
+├── data/
+│   └── synthetic_sku_daily.csv        # small sample dataset
+├── outputs/
+│   └── sku_forecasts_daily.csv        # placeholder output (naive forecast)
+├── streamlit_app.py                   # small UI to run pipeline steps
+├── data_generator.py                  # generate synthetic time-series data
+├── model_train.py                     # placeholder for training code
+├── batch_forecast.py                  # naive batch forecast example
+├── export_mysql.py                    # example: push CSV outputs into MySQL (SQLAlchemy)
+├── powerbi_instructions.md            # Power BI steps & Power Query snippets
+├── example_config.yaml                # config: num_skus, days, horizon, output sizes
+├── requirements.txt
+├── README.md
+├── Connect with PowerBI
+└── LICENSE
+
+```
+
+---
+
 ASCII diagram:
 ```
 [Local ETL: etl.py] --(transformed_daily_kpis.csv)--> [Power BI Desktop]
