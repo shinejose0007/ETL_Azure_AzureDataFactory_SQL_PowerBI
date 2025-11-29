@@ -153,11 +153,20 @@ Cloud / production architecture (Azure-ready, scalable)
 
 ASCII diagram:
 ```
-[Local ETL: etl.py] --(transformed_daily_kpis.csv)--> [Power BI Desktop]
-        |
-        +--(synapse_load.csv)--> [Azure Blob Storage] --(ADF Copy)--> [Azure SQL Database]
-                                                                    |
-                                                                    --> [Power BI Desktop / Service]
+[Local laptop] --(etl.py)--> {transformed_daily_kpis.csv, synapse_load.csv}
+|
++--> upload synapse_load.csv --> [Azure Blob Storage (demo container)]
+|
+v
+[Azure Data Factory - pipeline PL_Load_Transactions]
+|
+v
+[Azure SQL Database - dbo.SalesTransactions]
+|
+(optional) stored proc -> dbo.DailyKPIs
+|
+v
+[Power BI Desktop / Power BI Service]
 ```
 
 ---
