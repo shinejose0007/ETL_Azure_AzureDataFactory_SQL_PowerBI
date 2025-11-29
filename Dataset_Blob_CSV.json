@@ -1,0 +1,19 @@
+{
+  "name": "DS_Blob_SalesCSV_demo",
+  "properties": {
+    "linkedServiceName": {
+      "referenceName": "LS_BlobStorage_demo",
+      "type": "LinkedServiceReference"
+    },
+    "type": "DelimitedText",
+    "typeProperties": {
+      "location": {
+        "type": "AzureBlobStorageLocation",
+        "fileName": "synapse_load.csv",
+        "folderPath": "demo"
+      },
+      "columnDelimiter": ",",
+      "firstRowAsHeader": true
+    }
+  }
+}

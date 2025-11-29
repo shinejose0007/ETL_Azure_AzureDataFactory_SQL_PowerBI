@@ -1,0 +1,9 @@
+{
+  "name": "LS_BlobStorage_demo",
+  "properties": {
+    "type": "AzureBlobStorage",
+    "typeProperties": {
+      "connectionString": "DefaultEndpointsProtocol=https;AccountName=<your_storage_account>;AccountKey=<your_key>;EndpointSuffix=core.windows.net"
+    }
+  }
+}

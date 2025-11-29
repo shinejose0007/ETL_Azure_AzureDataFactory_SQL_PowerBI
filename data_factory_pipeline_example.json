@@ -1,0 +1,31 @@
+{
+  "name": "CopyFromBlobToSynapse_Filled",
+  "properties": {
+    "activities": [
+      {
+        "name": "CopyCSVToSynapse",
+        "type": "Copy",
+        "inputs": [
+          {
+            "referenceName": "DS_Blob_SalesCSV_demo",
+            "type": "DatasetReference"
+          }
+        ],
+        "outputs": [
+          {
+            "referenceName": "DS_Synapse_SalesTable_demo",
+            "type": "DatasetReference"
+          }
+        ],
+        "typeProperties": {
+          "source": {
+            "type": "DelimitedTextSource"
+          },
+          "sink": {
+            "type": "SqlSink"
+          }
+        }
+      }
+    ]
+  }
+}

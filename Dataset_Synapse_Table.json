@@ -1,0 +1,13 @@
+{
+  "name": "DS_Synapse_SalesTable_demo",
+  "properties": {
+    "linkedServiceName": {
+      "referenceName": "LS_Synapse_demo",
+      "type": "LinkedServiceReference"
+    },
+    "type": "AzureSqlTable",
+    "typeProperties": {
+      "tableName": "dbo.SalesTransactions"
+    }
+  }
+}

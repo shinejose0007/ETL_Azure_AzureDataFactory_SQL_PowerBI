@@ -1,0 +1,9 @@
+{
+  "name": "LS_Synapse_demo",
+  "properties": {
+    "type": "AzureSqlDatabase",
+    "typeProperties": {
+      "connectionString": "Server=tcp:<your_synapse_server>.database.windows.net,1433;Initial Catalog=<your_db>;Persist Security Info=False;User ID=<user>;Password=<password>;"
+    }
+  }
+}
