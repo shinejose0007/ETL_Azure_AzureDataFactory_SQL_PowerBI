@@ -1,63 +1,101 @@
-# Azure Data Factory → Synapse → Power BI - Demo Repo
 
-This small repository is designed as a hands-on demo you can complete in ~1–2 hours.
-It provides:
-- sample data: `data_sample_sales.csv`
-- ETL script: `etl.py` (creates `transformed_daily_kpis.csv` and `synapse_load.csv`)
-- Synapse SQL script: `create_table.sql`
-- Azure Data Factory pipeline template: `data_factory_pipeline_example.json`
-- README with step-by-step instructions (this file)
-- `pbix_readme.txt`: 3-sentence description for the Power BI artifact
+# Demo Project: End-to-End Analytics — Local ETL → Azure Blob → Azure SQL → ADF → Power BI
 
-## Quick summary (what you will build)
-1. Run the ETL locally to clean and produce daily KPIs.
-2. (Optional) Simulate loading full rows into Azure Synapse using `create_table.sql` and `synapse_load.csv`.
-3. Import `transformed_daily_kpis.csv` into Power BI Desktop and create a dashboard showing KPIs, trends and a simple forecast.
+**Purpose:**
+This repository is a hands-on demo that shows a minimal, reproducible analytics workflow: starting from raw transactional CSV data, performing local ETL to create KPI tables, moving data to Azure (Blob Storage → Azure SQL) using Azure Data Factory (ADF), and building a Power BI dashboard for stakeholders. It is designed for learning and for quickly creating a portfolio demo you can reference in job applications.
 
-## Step 1 — Inspect sample data
-File: `data_sample_sales.csv`  
-Columns: OrderID, OrderDate, Region, Product, Quantity, UnitPrice, Salesperson, Channel
+---
 
-## Step 2 — Run ETL (local)
-Requirements: Python 3.8+, pandas installed.
-1. Open a terminal in the repo folder.
-2. Run: `python etl.py`
-3. Outputs:
-   - `transformed_daily_kpis.csv` (daily KPIs ready for BI)
-   - `synapse_load.csv` (detailed rows to load into Synapse)
+##  High-level summary — What this program and repo do (from the beginning)
 
-## Step 3 — Load data into Synapse (optional)
-This is a high-level guide; use the Azure Portal / Synapse Studio:
-1. Create a database / dedicated SQL pool or use serverless SQL pool.
-2. Run `create_table.sql` in Synapse Studio to create tables.
-3. Use Azure Data Factory or Synapse Copy Data tool to copy `synapse_load.csv` from your Blob Storage into `dbo.SalesTransactions`. The `data_factory_pipeline_example.json` is a starting template for an ADF pipeline (replace dataset and linked service names).
+1. **Sample data** (`data_sample_sales.csv`) contains synthetic transactional sales rows (OrderID, OrderDate, Product, Quantity, UnitPrice, Region, Salesperson, Channel).
+2. **Local ETL script (`etl.py`)**:
+   - Reads the raw transactional CSV,
+   - Cleans and types the data,
+   - Computes `Total = Quantity * UnitPrice`,
+   - Aggregates daily KPIs (TotalSales, UnitsSold, AvgOrderValue),
+   - Creates a 7-day rolling average used as a simple baseline forecast,
+   - Saves two outputs:
+     - `transformed_daily_kpis.csv` — ready-for-BI KPI table
+     - `synapse_load.csv` — full transaction rows for loading into Azure SQL
+3. **Azure staging & ingestion (recommended flow)**:
+   - Upload `synapse_load.csv` to an Azure Blob container.
+   - Use **Azure Data Factory (ADF)** to copy from Blob → Azure SQL Database (or Synapse).
+   - The repository includes ADF pipeline JSON templates and Linked Service placeholders to speed up import into ADF.
+4. **Database**:
+   - Use `create_table.sql` to create `dbo.SalesTransactions` and `dbo.DailyKPIs` in Azure SQL.
+   - ADF writes transactional rows into `dbo.SalesTransactions`.
+   - You may optionally run an SQL job or stored procedure to populate `dbo.DailyKPIs` from `SalesTransactions`, or use the locally produced `transformed_daily_kpis.csv` directly for Power BI.
+5. **Power BI**:
+   - Import `transformed_daily_kpis.csv` (fast) or connect directly to Azure SQL (production-like).
+   - Transform data (Power Query), create dimension tables (Products, Regions, Salesperson, Channel, Date), build relationships (star schema), add DAX measures, and create report pages (Overview, Sales by Region/Product, Transactions, Forecast & Anomalies).
+6. **Outcome**: a reusable analytical pipeline and a report illustrating KPI-tracking, trends, forecasts and anomaly detection suitable for stakeholder demos and interviews.
 
-## Step 4 — Azure Data Factory (optional)
-1. In Azure Data Factory, create Linked Services:
-   - Blob Storage (where `synapse_load.csv` is uploaded)
-   - Azure Synapse Analytics (destination)
-2. Create Datasets:
-   - DelimitedText dataset pointing to the CSV in Blob Storage
-   - Azure SQL dataset pointing to the Synapse table
-3. Import the pipeline JSON (`data_factory_pipeline_example.json`) as a template, or create a Copy activity that reads the CSV and writes to the Synapse table.
+---
 
-## Step 5 — Build Power BI Dashboard (local)
-1. Open Power BI Desktop.
-2. Get Data → Text/CSV → choose `transformed_daily_kpis.csv`.
-3. In Power Query: ensure `OrderDate` is Date type; set locale if needed.
-4. Close & Apply.
-5. Create visuals:
-   - Card visual: TotalSales (measure: SUM(TotalSales))
-   - Line chart: OrderDate vs TotalSales (add Rolling7Avg as a second series)
-   - Bar chart: UnitsSold by OrderDate (or by Region if you load transactions)
-   - Table: Top Products (if loading detailed `synapse_load.csv` data)
-   - Forecast: select the line chart, use Analytics pane → Forecast to add a basic forecast.
-6. Save your report as `Demo_Sales_Report.pbix`.
+##  Why use this program and why integrate Azure?
 
-## PBIX README (3-sentence description)
-See `pbix_readme.txt`.
+- **Reproducibility**: ETL script standardizes cleaning and KPI generation. Anyone with the repo can reproduce the same KPIs.
+- **Scalability**: Azure Blob + SQL + ADF lets you move from local CSVs to cloud storage, schedule recurring loads, and handle large volumes.
+- **Automation**: ADF provides scheduling, monitoring and retry logic. Instead of manual uploads, pipelines run automatically.
+- **Separation of concerns**: ETL, storage, transformation and visualization live in their respective layers (modular architecture).
+- **Governance & Security**: Cloud storage + SQL provide central data access control and integration with Azure AD/Key Vault for credentials.
+- **Portfolio & hiring advantage**: Demonstrates cloud workflows (storage, ADF, SQL) plus BI visualization — highly relevant for BI & Data Analyst roles.
 
-## Tips & Next steps (high leverage)
-- Turn the local ETL into an Azure Function or Data Factory pipeline that runs on a schedule.
-- Replace CSV storage with Azure Blob Storage and point Data Factory to the storage.
-- Create a Synapse SQL view that aggregates KPIs for Power BI for better performance.
+---
+
+##  Quick-start (local only)
+
+1. Ensure Python 3.8+ and pip are installed.
+2. Extract the repository ZIP (or clone your GitHub repo with these files).
+3. Open a terminal in the folder and create virtualenv:
+   ```bash
+   python -m venv venv
+   # Activate (Windows PowerShell)
+   .\venv\Scripts\Activate.ps1
+   pip install -r requirements.txt
+   ```
+4. Run ETL:
+   ```bash
+   python etl.py
+   ```
+5. Files produced: `transformed_daily_kpis.csv`, `synapse_load.csv`.
+6. Open Power BI Desktop → Get Data → Text/CSV → import `transformed_daily_kpis.csv` and follow `powerbi_page_mockups.md` to assemble the report.
+
+---
+
+##  Architecture & flow (summary)
+
+- Local ETL produces KPIs and full transactions.
+- Blob holds raw transactions for ingestion.
+- ADF copies from Blob to Azure SQL.
+- Power BI connects to either local KPIs or Azure SQL for reporting.
+
+ASCII diagram:
+```
+[Local ETL: etl.py] --(transformed_daily_kpis.csv)--> [Power BI Desktop]
+        |
+        +--(synapse_load.csv)--> [Azure Blob Storage] --(ADF Copy)--> [Azure SQL Database]
+                                                                    |
+                                                                    --> [Power BI Desktop / Service]
+```
+
+---
+
+## Screenshots
+
+Outputs
+
+<p align="center"><img src="3.JPG" width="1000"></p>
+<p align="center"><img src="4.JPG" width="1000"></p>
+<p align="center"><img src="2.JPG" width="1000"></p>
+<p align="center"><img src="1.JPG" width="1000"></p>
+<p align="center"><img src="00.JPG" width="1000"></p>
+
+##  Next steps & improvements
+- Add Key Vault integration, managed identities, incremental loads, CI/CD for ADF, and scheduled refresh in Power BI Service.
+
+---
+
+**Author:** Shine Jose
+**License:** MIT (see LICENSE file)
