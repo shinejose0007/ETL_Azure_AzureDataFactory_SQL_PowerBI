@@ -86,11 +86,13 @@ ASCII diagram:
 
 Outputs
 
+<p align="center"><img src="000.JPG" width="1000"></p>
+<p align="center"><img src="1.JPG" width="1000"></p>
+<p align="center"><img src="2.JPG" width="1000"></p>
 <p align="center"><img src="3.JPG" width="1000"></p>
 <p align="center"><img src="4.JPG" width="1000"></p>
-<p align="center"><img src="2.JPG" width="1000"></p>
-<p align="center"><img src="1.JPG" width="1000"></p>
-<p align="center"><img src="00.JPG" width="1000"></p>
+<p align="center"><img src="5.JPG" width="1000"></p>
+
 
 ##  Next steps & improvements
 - Add Key Vault integration, managed identities, incremental loads, CI/CD for ADF, and scheduled refresh in Power BI Service.
